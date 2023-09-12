@@ -21,13 +21,7 @@ import {
 } from "./appointment-dialog-content-form";
 
 export default function App() {
-  const [events, setEvents] = useState<CalendarEvent[]>(() => {
-    return occurences.map((date) => ({
-      start: date,
-      end: new Date(date.getTime() + 1 * 60 * 60 * 1000), // Assuming 1 hour event duration
-      title: "Recurring Event",
-    }));
-  });
+  const [events, setEvents] = useState<CalendarEvent[]>([]);
 
   const [selectedSlot, setSelectedSlot] = useState<SlotInfo | null>(null);
   const isOpenAppointmentDialog = !!selectedSlot;
@@ -75,7 +69,7 @@ export default function App() {
         onSelectEvent={handleSelectEvent}
         selectable
         defaultView="week"
-        events={events}
+        events={events as any}
         localizer={localizer}
         style={{ height: "100vh" }}
         startAccessor="start"
