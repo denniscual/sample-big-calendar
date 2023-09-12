@@ -1,20 +1,89 @@
-import { FC, useState } from "react";
+import { useState } from "react";
 import {
   Calendar,
   dateFnsLocalizer,
   SlotInfo,
-  Event as AppointmentEvent,
+  Event as CalendarEvent,
 } from "react-big-calendar";
 import "react-big-calendar/lib/addons/dragAndDrop/styles.css";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 
-import moment from "moment";
 import { RRule } from "rrule";
 import format from "date-fns/format";
 import parse from "date-fns/parse";
 import startOfWeek from "date-fns/startOfWeek";
 import getDay from "date-fns/getDay";
 import enUS from "date-fns/locale/en-US";
+import { Dialog } from "@radix-ui/themes";
+import {
+  AppointmentDialogContentForm,
+  AppointmentEvent,
+} from "./appointment-dialog-content-form";
+
+export default function App() {
+  const [events, setEvents] = useState<CalendarEvent[]>(() => {
+    return occurences.map((date) => ({
+      start: date,
+      end: new Date(date.getTime() + 1 * 60 * 60 * 1000), // Assuming 1 hour event duration
+      title: "Recurring Event",
+    }));
+  });
+
+  const [selectedSlot, setSelectedSlot] = useState<SlotInfo | null>(null);
+  const isOpenAppointmentDialog = !!selectedSlot;
+
+  function handleSelectSlot(data: SlotInfo) {
+    setSelectedSlot(data);
+
+    // const momentSelectedDateObj = moment(new Date(data.slots[0]).toISOString());
+    // console.log("selected date", momentSelectedDateObj.toDate().toISOString());
+    //
+    // setEvents([
+    //   ...events,
+    //   {
+    //     title: "New appoinment",
+    //     start: momentSelectedDateObj.toDate(),
+    //     end: momentSelectedDateObj.add(1, "hours").toDate(),
+    //   },
+    // ]);
+  }
+
+  function handleSelectEvent(appointment: AppointmentEvent) {
+    console.log({ appointment });
+  }
+
+  return (
+    <div>
+      <Dialog.Root
+        onOpenChange={(open) => {
+          if (open) return;
+          setSelectedSlot(null);
+        }}
+        open={isOpenAppointmentDialog}
+      >
+        {selectedSlot ? (
+          <AppointmentDialogContentForm
+            initialValue={{
+              title: "",
+              start: selectedSlot.slots[0],
+            }}
+          />
+        ) : null}
+      </Dialog.Root>
+      <Calendar
+        onSelectSlot={handleSelectSlot}
+        onSelectEvent={handleSelectEvent}
+        selectable
+        defaultView="week"
+        events={events}
+        localizer={localizer}
+        style={{ height: "100vh" }}
+        startAccessor="start"
+        endAccessor="end"
+      />
+    </div>
+  );
+}
 
 const dtstartDate = new Date("2023-09-24T16:00:00.000Z");
 
@@ -63,48 +132,4 @@ const localizer = dateFnsLocalizer({
   locales,
 });
 
-const App: FC = () => {
-  const [events, setEvents] = useState<AppointmentEvent[]>(() => {
-    return occurences.map((date) => ({
-      start: date,
-      end: new Date(date.getTime() + 1 * 60 * 60 * 1000), // Assuming 1 hour event duration
-      title: "Recurring Event",
-    }));
-  });
-
-  function handleSelectSlot(data: SlotInfo) {
-    const momentSelectedDateObj = moment(new Date(data.slots[0]).toISOString());
-    console.log("selected date", momentSelectedDateObj.toDate().toISOString());
-
-    setEvents([
-      ...events,
-      {
-        title: "New appoinment",
-        start: momentSelectedDateObj.toDate(),
-        end: momentSelectedDateObj.add(1, "hours").toDate(),
-      },
-    ]);
-  }
-
-  function handleSelectEvent(appointment: AppointmentEvent) {
-    console.log({ appointment });
-  }
-
-  return (
-    <div>
-      <Calendar
-        onSelectSlot={handleSelectSlot}
-        onSelectEvent={handleSelectEvent}
-        selectable
-        defaultView="week"
-        events={events}
-        localizer={localizer}
-        style={{ height: "100vh" }}
-        startAccessor="start"
-        endAccessor="end"
-      />
-    </div>
-  );
-};
-
-export default App;
+console.log({ RRule });
