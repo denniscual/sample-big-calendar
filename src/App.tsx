@@ -1,7 +1,7 @@
 import { FC, useState } from "react";
 import {
   Calendar,
-  momentLocalizer,
+  dateFnsLocalizer,
   SlotInfo,
   Event as AppointmentEvent,
 } from "react-big-calendar";
@@ -9,27 +9,63 @@ import "react-big-calendar/lib/addons/dragAndDrop/styles.css";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 
 import moment from "moment";
-import "moment-timezone";
 import { RRule } from "rrule";
+import format from "date-fns/format";
+import parse from "date-fns/parse";
+import startOfWeek from "date-fns/startOfWeek";
+import getDay from "date-fns/getDay";
+import enUS from "date-fns/locale/en-US";
 
-const rule = new RRule({
+const dtstartDate = new Date("2023-09-24T16:00:00.000Z");
+
+const rrule = new RRule({
   freq: RRule.WEEKLY,
-  interval: 1,
   byweekday: [RRule.TU],
-  dtstart: new Date(Date.UTC(2023, 8, 1, 5, 0)), // 5am start time. Note: January is 0 in JavaScript Date
-  until: new Date(Date.UTC(2023, 9, 31, 6, 0)), // Until end of the year at 6am
+  dtstart: setPartsToUTCDate(dtstartDate), // See note 1
   tzid: "Pacific/Auckland",
 });
+const datetimes = rrule.between(new Date("2023-09-1"), new Date("2024-10-30"));
+let occurences = datetimes;
+occurences = datetimes.map(setUTCPartsToDate);
 
-const occurrences = rule.all();
+function setPartsToUTCDate(d: Date) {
+  return new Date(
+    Date.UTC(
+      d.getFullYear(),
+      d.getMonth(),
+      d.getDate(),
+      d.getHours(),
+      d.getMinutes(),
+      d.getSeconds()
+    )
+  );
+}
 
-console.log({ occurrences });
+function setUTCPartsToDate(d: Date) {
+  return new Date(
+    d.getUTCFullYear(),
+    d.getUTCMonth(),
+    d.getUTCDate(),
+    d.getUTCHours(),
+    d.getUTCMinutes(),
+    d.getUTCSeconds()
+  );
+}
 
-const localizer = momentLocalizer(moment);
+const locales = {
+  "en-US": enUS,
+};
+const localizer = dateFnsLocalizer({
+  format,
+  parse,
+  startOfWeek,
+  getDay,
+  locales,
+});
 
 const App: FC = () => {
   const [events, setEvents] = useState<AppointmentEvent[]>(() => {
-    return occurrences.map((date) => ({
+    return occurences.map((date) => ({
       start: date,
       end: new Date(date.getTime() + 1 * 60 * 60 * 1000), // Assuming 1 hour event duration
       title: "Recurring Event",
@@ -38,6 +74,8 @@ const App: FC = () => {
 
   function handleSelectSlot(data: SlotInfo) {
     const momentSelectedDateObj = moment(new Date(data.slots[0]).toISOString());
+    console.log("selected date", momentSelectedDateObj.toDate().toISOString());
+
     setEvents([
       ...events,
       {
@@ -58,7 +96,7 @@ const App: FC = () => {
         onSelectSlot={handleSelectSlot}
         onSelectEvent={handleSelectEvent}
         selectable
-        defaultView="day"
+        defaultView="week"
         events={events}
         localizer={localizer}
         style={{ height: "100vh" }}
@@ -70,12 +108,3 @@ const App: FC = () => {
 };
 
 export default App;
-
-// console.log(momentObj.format('dddd, MMMM Do YYYY, h:mm:ss a"'))
-// [
-//     {
-//       title: 'Cleaning',
-//       start: moment('2023-09-24T17:00:00Z').toDate(),
-//       end: moment('2023-09-24T17:00:00Z').add(1, 'hours').toDate(),
-//     },
-//   ]
