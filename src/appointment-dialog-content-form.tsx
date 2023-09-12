@@ -30,7 +30,6 @@ export function AppointmentDialogContentForm({
       setMinutes(initialValue.start ?? currentDate, 0),
       0
     );
-
     return {
       ...initialValue,
       title: initialValue.title ?? "",
@@ -38,6 +37,10 @@ export function AppointmentDialogContentForm({
       end: initialValue.end ?? addHours(startDate, 1),
     };
   });
+
+  const [selectedRepeatOption, setSelectedRepeatOption] = useState(
+    RepeatOptions.NO_REPEAT
+  );
 
   return (
     <Dialog.Content style={{ maxWidth: 450 }}>
@@ -81,13 +84,9 @@ export function AppointmentDialogContentForm({
             Repeat
           </Text>
           <Selector
-            defaultValue="no-repeat"
-            items={[
-              {
-                value: "no-repeat",
-                label: `Don't repeat`,
-              },
-            ]}
+            value={selectedRepeatOption}
+            onValueChange={setSelectedRepeatOption}
+            items={repeatOptions}
           />
         </label>
       </Flex>
@@ -112,3 +111,24 @@ export function AppointmentDialogContentForm({
     </Dialog.Content>
   );
 }
+
+const RepeatOptions = {
+  NO_REPEAT: "NO_REPEAT",
+  DAILY: "DAILY",
+  WEEKLY: "WEEKLY",
+};
+
+const repeatOptions = [
+  {
+    value: RepeatOptions.NO_REPEAT,
+    label: `Don't repeat`,
+  },
+  {
+    value: RepeatOptions.DAILY,
+    label: "Daily",
+  },
+  {
+    value: RepeatOptions.WEEKLY,
+    label: "Weekly",
+  },
+];
