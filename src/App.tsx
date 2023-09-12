@@ -34,22 +34,21 @@ export default function App() {
 
   function handleSelectSlot(data: SlotInfo) {
     setSelectedSlot(data);
-
-    // const momentSelectedDateObj = moment(new Date(data.slots[0]).toISOString());
-    // console.log("selected date", momentSelectedDateObj.toDate().toISOString());
-    //
-    // setEvents([
-    //   ...events,
-    //   {
-    //     title: "New appoinment",
-    //     start: momentSelectedDateObj.toDate(),
-    //     end: momentSelectedDateObj.add(1, "hours").toDate(),
-    //   },
-    // ]);
   }
 
   function handleSelectEvent(appointment: AppointmentEvent) {
     console.log({ appointment });
+  }
+
+  function handleSubmit(value: AppointmentEvent) {
+    setEvents([
+      ...events,
+      {
+        title: value.title,
+        start: value.start,
+        end: value.end,
+      },
+    ]);
   }
 
   return (
@@ -63,6 +62,7 @@ export default function App() {
       >
         {selectedSlot ? (
           <AppointmentDialogContentForm
+            onSubmit={handleSubmit}
             initialValue={{
               title: "",
               start: selectedSlot.slots[0],

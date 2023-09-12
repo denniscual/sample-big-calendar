@@ -22,8 +22,6 @@ export function AppointmentDialogContentForm({
   initialValue = {},
   onSubmit,
 }: AppointmentDialogContentFormProps) {
-  // console.log({ initialValue });
-
   const [value, setValue] = useState<
     RequireKeys<AppointmentEvent, "start" | "end">
   >(() => {
@@ -100,7 +98,15 @@ export function AppointmentDialogContentForm({
           </Button>
         </Dialog.Close>
         <Dialog.Close>
-          <Button>Save</Button>
+          <Button
+            onClick={() => {
+              // TODO:
+              // - handle rrule here.
+              onSubmit?.(value);
+            }}
+          >
+            Save
+          </Button>
         </Dialog.Close>
       </Flex>
     </Dialog.Content>
