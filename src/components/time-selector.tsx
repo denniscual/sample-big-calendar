@@ -38,7 +38,7 @@ export function TimeSelector({ date, onTimePickerChange }: TimeSelectorProps) {
 }
 
 const generateTimeSlots = (interval = 60) => {
-  const slots = [];
+  const slots: string[] = [];
   let current = new Date();
   current.setHours(0, 0, 0, 0);
 
