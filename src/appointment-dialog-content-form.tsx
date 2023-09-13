@@ -26,7 +26,7 @@ export function AppointmentDialogContentForm({
   onSubmit,
 }: AppointmentDialogContentFormProps) {
   const [value, setValue] = useState<
-    RequireKeys<Partial<AppointmentEvent>, "start" | "title" | "duration">
+    RequireKeys<Partial<AppointmentEvent>, "start" | "title">
   >(() => {
     const currentDate = new Date();
     const startDate = setSeconds(
@@ -83,14 +83,16 @@ export function AppointmentDialogContentForm({
         </label>
         <label>
           <Text as="div" size="2" mb="2" weight="bold">
-            Appointment Duration
+            Appointment Duration (hour)
           </Text>
           <TextField.Input
+            min={0}
             value={value.duration}
             onChange={(event) => {
+              const { target } = event;
               setValue({
                 ...value,
-                duration: parseInt(event.target.value),
+                duration: parseInt(target.value),
               });
             }}
             type="number"

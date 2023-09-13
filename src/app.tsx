@@ -80,7 +80,7 @@ export default function App() {
         return {
           title: title,
           start: date,
-          end: addHours(date, duration!),
+          end: addHours(date, !duration || isNaN(duration) ? 1 : duration),
         };
       });
 
