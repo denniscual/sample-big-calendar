@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   Calendar,
   dateFnsLocalizer,
@@ -20,13 +20,51 @@ import {
 } from "./appointment-dialog-content-form";
 import { setUTCPartsToDate } from "./utils/dates";
 import { addHours } from "date-fns";
+import { Selector } from "./components/ui/selector";
+
+const locales = {
+  "en-US": enUS,
+};
+const localizer = dateFnsLocalizer({
+  format,
+  parse,
+  startOfWeek,
+  getDay,
+  locales,
+});
 
 export default function App() {
   const [events, setEvents] = useState<CalendarEvent[]>([]);
   const [selectedSlot, setSelectedSlot] = useState<SlotInfo | null>(null);
   const [appointmentDuration, setAppointmentDuration] = useState(1);
-
+  const [selectedTimeZone, setSelectedTimeZone] = useState("Pacific/Auckland");
+  const [timeZones, setTimeZones] = useState<string[]>([]);
+  const timeZoneOptions = useMemo(
+    () =>
+      timeZones.map((timeZone) => ({
+        label: timeZone,
+        value: timeZone,
+      })),
+    [timeZones]
+  );
   const isOpenAppointmentDialog = !!selectedSlot;
+
+  useEffect(() => {
+    fetch("/api/countries/TimeZone/AvailableTimeZones")
+      .then((res) => {
+        if (!res.ok) {
+          console.error(`HTTP error! Status: ${res.status}`);
+        }
+        return res.json();
+      })
+      .then((data) => {
+        setTimeZones(data);
+      });
+  }, []);
+
+  if (timeZones.length === 0) {
+    return <div>Loading app...</div>;
+  }
 
   function handleSelectSlot(data: SlotInfo) {
     setSelectedSlot(data);
@@ -120,9 +158,10 @@ export default function App() {
                 <Text as="div" size="2" weight="bold">
                   Change Timezone
                 </Text>
-                <TextField.Input
-                  defaultValue="Freja Johnsen"
-                  placeholder="Enter your full name"
+                <Selector
+                  value={selectedTimeZone}
+                  onValueChange={setSelectedTimeZone}
+                  items={timeZoneOptions}
                 />
               </label>
             </Flex>
@@ -146,16 +185,5 @@ export default function App() {
     </div>
   );
 }
-
-const locales = {
-  "en-US": enUS,
-};
-const localizer = dateFnsLocalizer({
-  format,
-  parse,
-  startOfWeek,
-  getDay,
-  locales,
-});
 
 console.log({ RRule });

@@ -15,7 +15,7 @@ export function TimeSelector({
   onTimePickerChange,
   interval = 60,
 }: TimeSelectorProps) {
-  const timeSlots = generateTimeSlots(interval).map((slot) => ({
+  const timeSlotOptions = generateTimeSlots(interval).map((slot) => ({
     label: slot,
     value: slot,
   }));
@@ -37,7 +37,7 @@ export function TimeSelector({
     <Selector
       value={currentTimeSlot}
       onValueChange={handleValueChange}
-      items={timeSlots}
+      items={timeSlotOptions}
     />
   );
 }
