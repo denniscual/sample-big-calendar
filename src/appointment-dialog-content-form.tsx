@@ -6,18 +6,20 @@ import { TimeSelector } from "@/components/time-selector";
 import format from "date-fns/format";
 import setMinutes from "date-fns/setMinutes";
 import setSeconds from "date-fns/setSeconds";
-import { RequireKeys } from "@/utils/types";
 import { getUTCDate } from "@/utils/date";
+import { RequireKeys } from "./utils/types";
 
 export type AppointmentEvent = {
   title: string;
-  start?: Date;
+  start: Date;
   duration?: number;
   rrule: RRule;
 };
 
+type InitialAppointmentEventValue = Partial<AppointmentEvent>;
+
 export type AppointmentDialogContentFormProps = {
-  initialValue?: Partial<AppointmentEvent>;
+  initialValue?: InitialAppointmentEventValue;
   onSubmit?: (value: AppointmentEvent) => void;
 };
 
@@ -26,7 +28,7 @@ export function AppointmentDialogContentForm({
   onSubmit,
 }: AppointmentDialogContentFormProps) {
   const [value, setValue] = useState<
-    RequireKeys<Partial<AppointmentEvent>, "start" | "title">
+    RequireKeys<InitialAppointmentEventValue, "start" | "title">
   >(() => {
     const currentDate = new Date();
     const startDate = setSeconds(
