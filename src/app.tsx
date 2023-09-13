@@ -18,7 +18,7 @@ import {
   AppointmentDialogContentForm,
   AppointmentEvent,
 } from "./appointment-dialog-content-form";
-import { setUTCPartsToDate } from "./utils/dates";
+import { getLocalDate } from "./utils/dates";
 import { addHours } from "date-fns";
 import { Selector } from "./components/ui/selector";
 
@@ -75,7 +75,7 @@ export default function App() {
 
     const occurencesWithEvent = rrule
       .all()
-      .map(setUTCPartsToDate)
+      .map(getLocalDate)
       .map((date) => {
         return {
           title: value.title,
@@ -111,11 +111,11 @@ export default function App() {
         onSelectSlot={handleSelectSlot}
         selectable
         defaultView="week"
-        events={events as any}
+        events={events}
         localizer={localizer}
         style={{ height: "100vh" }}
         startAccessor="start"
-        endAccessor={"end" as any}
+        endAccessor={"end"}
       />
       <footer
         style={{
@@ -174,10 +174,10 @@ export default function App() {
                     end: event.end?.toISOString(),
                   })),
                 };
-                alert(JSON.stringify(data));
+                navigator.clipboard.writeText(JSON.stringify(data));
               }}
             >
-              Show appointments
+              Copy to clipboard
             </Button>
           </Flex>
         </Card>

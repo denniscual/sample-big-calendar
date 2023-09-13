@@ -5,7 +5,7 @@ import { Selector } from "@/components/ui/selector";
 import { TimeSelector } from "./components/time-selector";
 import { format, setMinutes, setSeconds } from "date-fns";
 import { RequireKeys } from "@/utils/types";
-import { setPartsToUTCDate } from "@/utils/dates";
+import { getUTCDate } from "@/utils/dates";
 
 export type AppointmentEvent = {
   title: string;
@@ -97,7 +97,7 @@ export function AppointmentDialogContentForm({
         <Dialog.Close>
           <Button
             onClick={() => {
-              const dtstart = new Date(value.start.toISOString());
+              const dtstart = getUTCDate(value.start);
               const until = new Date("2024-12-30T17:00:00Z");
 
               switch (selectedRepeatOption) {
@@ -106,7 +106,7 @@ export function AppointmentDialogContentForm({
                     ...value,
                     rrule: new RRule({
                       freq: RRule[selectedRepeatOption],
-                      dtstart: setPartsToUTCDate(dtstart),
+                      dtstart,
                       tzid: "Pacific/Auckland",
                       until,
                     }),
@@ -117,7 +117,7 @@ export function AppointmentDialogContentForm({
                   const rrule = new RRule({
                     freq: RRule[selectedRepeatOption],
                     byweekday: [RRule[format(dtstart, "EEEEEE").toUpperCase()]],
-                    dtstart: setPartsToUTCDate(dtstart),
+                    dtstart,
                     tzid: "Pacific/Auckland",
                     until,
                   });
@@ -131,7 +131,7 @@ export function AppointmentDialogContentForm({
                   onSubmit?.({
                     ...value,
                     rrule: new RRule({
-                      dtstart: setPartsToUTCDate(dtstart),
+                      dtstart,
                       count: 1,
                       tzid: "Pacific/Auckland",
                       until,

@@ -1,4 +1,4 @@
-export function setPartsToUTCDate(d: Date) {
+export function getUTCDate(d: Date) {
   return new Date(
     Date.UTC(
       d.getFullYear(),
@@ -11,7 +11,7 @@ export function setPartsToUTCDate(d: Date) {
   );
 }
 
-export function setUTCPartsToDate(d: Date) {
+export function getLocalDate(d: Date) {
   return new Date(
     d.getUTCFullYear(),
     d.getUTCMonth(),
