@@ -12,6 +12,7 @@ import { getUTCDate } from "@/utils/date";
 export type AppointmentEvent = {
   title: string;
   start?: Date;
+  duration?: number;
   rrule: RRule;
 };
 
@@ -25,7 +26,7 @@ export function AppointmentDialogContentForm({
   onSubmit,
 }: AppointmentDialogContentFormProps) {
   const [value, setValue] = useState<
-    RequireKeys<Partial<AppointmentEvent>, "start" | "title">
+    RequireKeys<Partial<AppointmentEvent>, "start" | "title" | "duration">
   >(() => {
     const currentDate = new Date();
     const startDate = setSeconds(
@@ -36,6 +37,7 @@ export function AppointmentDialogContentForm({
       ...initialValue,
       title: initialValue.title ?? "",
       start: startDate,
+      duration: initialValue.duration ?? 1,
     };
   });
 
@@ -77,6 +79,22 @@ export function AppointmentDialogContentForm({
                 start: date,
               });
             }}
+          />
+        </label>
+        <label>
+          <Text as="div" size="2" mb="2" weight="bold">
+            Appointment Duration
+          </Text>
+          <TextField.Input
+            value={value.duration}
+            onChange={(event) => {
+              setValue({
+                ...value,
+                duration: parseInt(event.target.value),
+              });
+            }}
+            type="number"
+            placeholder="E.g 1 hour duration"
           />
         </label>
         <label>

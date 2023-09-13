@@ -7,14 +7,13 @@ import {
 } from "react-big-calendar";
 import "react-big-calendar/lib/addons/dragAndDrop/styles.css";
 import "react-big-calendar/lib/css/react-big-calendar.css";
-import { RRule } from "rrule";
 import format from "date-fns/format";
 import parse from "date-fns/parse";
 import startOfWeek from "date-fns/startOfWeek";
 import getDay from "date-fns/getDay";
 import enUS from "date-fns/locale/en-US";
 import addHours from "date-fns/addHours";
-import { Button, Card, Dialog, Flex, Text, TextField } from "@radix-ui/themes";
+import { Button, Card, Dialog, Flex, Text } from "@radix-ui/themes";
 import {
   AppointmentDialogContentForm,
   AppointmentEvent,
@@ -36,8 +35,9 @@ const localizer = dateFnsLocalizer({
 export default function App() {
   const [events, setEvents] = useState<CalendarEvent[]>([]);
   const [selectedSlot, setSelectedSlot] = useState<SlotInfo | null>(null);
-  const [appointmentDuration, setAppointmentDuration] = useState(1);
-  const [selectedTimeZone, setSelectedTimeZone] = useState("Pacific/Auckland");
+  const [selectedTimeZone, setSelectedTimeZone] = useState(
+    () => new Intl.DateTimeFormat().resolvedOptions().timeZone
+  );
   const [timeZones, setTimeZones] = useState<string[]>([]);
   const timeZoneOptions = useMemo(
     () =>
@@ -71,16 +71,16 @@ export default function App() {
   }
 
   function handleSubmit(value: AppointmentEvent) {
-    const { rrule } = value;
+    const { rrule, title, duration } = value;
 
     const occurencesWithEvent = rrule
       .all()
       .map(getLocalDate)
       .map((date) => {
         return {
-          title: value.title,
+          title: title,
           start: date,
-          end: addHours(date, appointmentDuration),
+          end: addHours(date, duration!),
         };
       });
 
@@ -117,6 +117,11 @@ export default function App() {
         startAccessor="start"
         endAccessor={"end"}
       />
+      <div
+        style={{
+          height: 200,
+        }}
+      />
       <footer
         style={{
           position: "fixed",
@@ -132,7 +137,7 @@ export default function App() {
       >
         <Card
           style={{
-            maxWidth: 800,
+            maxWidth: 500,
             margin: "auto",
             height: "100%",
           }}
@@ -141,24 +146,11 @@ export default function App() {
             <Flex gap="2" asChild align="center" width="100%">
               <label>
                 <Text as="div" size="2" weight="bold">
-                  Appointment Duration
-                </Text>
-                <TextField.Input
-                  value={appointmentDuration}
-                  onChange={(event) =>
-                    setAppointmentDuration(parseInt(event.target.value))
-                  }
-                  type="number"
-                  placeholder="E.g 1 hour duration"
-                />
-              </label>
-            </Flex>
-            <Flex gap="2" asChild align="center" width="100%">
-              <label>
-                <Text as="div" size="2" weight="bold">
                   Change Timezone
                 </Text>
+
                 <Selector
+                  disabled
                   value={selectedTimeZone}
                   onValueChange={setSelectedTimeZone}
                   items={timeZoneOptions}
@@ -185,5 +177,3 @@ export default function App() {
     </div>
   );
 }
-
-console.log({ RRule });
