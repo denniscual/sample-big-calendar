@@ -13,7 +13,7 @@ import parse from "date-fns/parse";
 import startOfWeek from "date-fns/startOfWeek";
 import getDay from "date-fns/getDay";
 import enUS from "date-fns/locale/en-US";
-import { Card, Dialog, Flex, Text, TextField } from "@radix-ui/themes";
+import { Button, Card, Dialog, Flex, Text, TextField } from "@radix-ui/themes";
 import {
   AppointmentDialogContentForm,
   AppointmentEvent,
@@ -94,7 +94,7 @@ export default function App() {
       >
         <Card
           style={{
-            maxWidth: 700,
+            maxWidth: 800,
             margin: "auto",
             height: "100%",
           }}
@@ -126,6 +126,20 @@ export default function App() {
                 />
               </label>
             </Flex>
+            <Button
+              onClick={() => {
+                const data = {
+                  appointments: events.map((event) => ({
+                    ...event,
+                    start: event.start?.toISOString(),
+                    end: event.end?.toISOString(),
+                  })),
+                };
+                alert(JSON.stringify(data));
+              }}
+            >
+              Show appointments
+            </Button>
           </Flex>
         </Card>
       </footer>
