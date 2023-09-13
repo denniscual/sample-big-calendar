@@ -5,8 +5,6 @@ import {
   SlotInfo,
   Event as CalendarEvent,
 } from "react-big-calendar";
-import "react-big-calendar/lib/addons/dragAndDrop/styles.css";
-import "react-big-calendar/lib/css/react-big-calendar.css";
 import format from "date-fns/format";
 import parse from "date-fns/parse";
 import startOfWeek from "date-fns/startOfWeek";
@@ -68,7 +66,6 @@ export default function App() {
       });
 
     setEvents([...events, ...occurencesWithEvent]);
-    return;
   }
 
   return (
@@ -131,7 +128,6 @@ export default function App() {
                 <Text as="div" size="2" weight="bold">
                   Change Timezone
                 </Text>
-
                 <Selector
                   disabled
                   value={selectedTimeZone}
