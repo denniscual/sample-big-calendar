@@ -4,13 +4,14 @@ import { Button, Dialog, Flex, Text, TextField } from "@radix-ui/themes";
 import { Selector } from "@/components/ui/selector";
 import { TimeSelector } from "./components/time-selector";
 import { addHours, format, setMinutes, setSeconds } from "date-fns";
-import { RequireKeys } from "./utils/types";
+import { RequireKeys } from "@/utils/types";
+import { setPartsToUTCDate } from "@/utils/dates";
 
 export type AppointmentEvent = {
   title: string;
   start?: Date;
   end?: Date;
-  rrule?: RRule;
+  rrule: RRule;
 };
 
 export type AppointmentDialogContentFormProps = {
@@ -23,7 +24,7 @@ export function AppointmentDialogContentForm({
   onSubmit,
 }: AppointmentDialogContentFormProps) {
   const [value, setValue] = useState<
-    RequireKeys<AppointmentEvent, "start" | "end">
+    RequireKeys<Partial<AppointmentEvent>, "start" | "end" | "title">
   >(() => {
     const currentDate = new Date();
     const startDate = setSeconds(
@@ -99,9 +100,47 @@ export function AppointmentDialogContentForm({
         <Dialog.Close>
           <Button
             onClick={() => {
-              // TODO:
-              // - handle rrule here.
-              onSubmit?.(value);
+              const dtstart = new Date(value.start.toISOString());
+
+              switch (selectedRepeatOption) {
+                case RepeatOptions.DAILY: {
+                  onSubmit?.({
+                    ...value,
+                    rrule: new RRule({
+                      freq: RRule[selectedRepeatOption],
+                      dtstart: setPartsToUTCDate(dtstart),
+                      tzid: "Pacific/Auckland",
+                      until: new Date("2023-12-30T17:00:00Z"),
+                    }),
+                  });
+                  break;
+                }
+                case RepeatOptions.WEEKLY: {
+                  const rrule = new RRule({
+                    freq: RRule[selectedRepeatOption],
+                    byweekday: [RRule[format(dtstart, "EEEEEE").toUpperCase()]],
+                    dtstart: setPartsToUTCDate(dtstart),
+                    tzid: "Pacific/Auckland",
+                    until: new Date("2023-12-30T17:00:00Z"),
+                  });
+                  onSubmit?.({
+                    ...value,
+                    rrule,
+                  });
+                  break;
+                }
+                default: {
+                  onSubmit?.({
+                    ...value,
+                    rrule: new RRule({
+                      dtstart: setPartsToUTCDate(dtstart),
+                      count: 1,
+                      tzid: "Pacific/Auckland",
+                      until: new Date("2023-12-30T17:00:00Z"),
+                    }),
+                  });
+                }
+              }
             }}
           >
             Save

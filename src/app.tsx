@@ -19,6 +19,8 @@ import {
   AppointmentDialogContentForm,
   AppointmentEvent,
 } from "./appointment-dialog-content-form";
+import { setUTCPartsToDate } from "./utils/dates";
+import { addHours } from "date-fns";
 
 export default function App() {
   const [events, setEvents] = useState<CalendarEvent[]>([]);
@@ -35,14 +37,21 @@ export default function App() {
   }
 
   function handleSubmit(value: AppointmentEvent) {
-    setEvents([
-      ...events,
-      {
-        title: value.title,
-        start: value.start,
-        end: value.end,
-      },
-    ]);
+    const { rrule } = value;
+
+    const occurencesWithEvent = rrule
+      .all()
+      .map(setUTCPartsToDate)
+      .map((date) => {
+        return {
+          title: value.title,
+          start: date,
+          end: addHours(date, 1),
+        };
+      });
+
+    setEvents([...events, ...occurencesWithEvent]);
+    return;
   }
 
   return (
@@ -76,42 +85,6 @@ export default function App() {
         endAccessor="end"
       />
     </div>
-  );
-}
-
-const dtstartDate = new Date("2023-09-24T16:00:00.000Z");
-
-const rrule = new RRule({
-  freq: RRule.WEEKLY,
-  byweekday: [RRule.TU],
-  dtstart: setPartsToUTCDate(dtstartDate), // See note 1
-  tzid: "Pacific/Auckland",
-});
-const datetimes = rrule.between(new Date("2023-09-1"), new Date("2024-10-30"));
-let occurences = datetimes;
-occurences = datetimes.map(setUTCPartsToDate);
-
-function setPartsToUTCDate(d: Date) {
-  return new Date(
-    Date.UTC(
-      d.getFullYear(),
-      d.getMonth(),
-      d.getDate(),
-      d.getHours(),
-      d.getMinutes(),
-      d.getSeconds()
-    )
-  );
-}
-
-function setUTCPartsToDate(d: Date) {
-  return new Date(
-    d.getUTCFullYear(),
-    d.getUTCMonth(),
-    d.getUTCDate(),
-    d.getUTCHours(),
-    d.getUTCMinutes(),
-    d.getUTCSeconds()
   );
 }
 
