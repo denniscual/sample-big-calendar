@@ -7,14 +7,13 @@ import {
 } from "react-big-calendar";
 import "react-big-calendar/lib/addons/dragAndDrop/styles.css";
 import "react-big-calendar/lib/css/react-big-calendar.css";
-
 import { RRule } from "rrule";
 import format from "date-fns/format";
 import parse from "date-fns/parse";
 import startOfWeek from "date-fns/startOfWeek";
 import getDay from "date-fns/getDay";
 import enUS from "date-fns/locale/en-US";
-import { Dialog } from "@radix-ui/themes";
+import { Card, Dialog, Flex, Text, TextField } from "@radix-ui/themes";
 import {
   AppointmentDialogContentForm,
   AppointmentEvent,
@@ -80,6 +79,52 @@ export default function App() {
         startAccessor="start"
         endAccessor={"end" as any}
       />
+      <footer
+        style={{
+          position: "fixed",
+          bottom: 0,
+          left: 0,
+          height: 100,
+          width: "100%",
+          backgroundColor: "#fafafa",
+          boxShadow: "1px -1px #d7d7d7",
+          padding: 16,
+          boxSizing: "border-box",
+        }}
+      >
+        <Card
+          style={{
+            maxWidth: 700,
+            margin: "auto",
+            height: "100%",
+          }}
+        >
+          <Flex gap="3" align="center" height="100%" justify="between">
+            <Flex gap="2" asChild align="center" width="100%">
+              <label>
+                <Text as="div" size="2" weight="bold">
+                  Appointment Duration
+                </Text>
+                <TextField.Input
+                  type="number"
+                  placeholder="E.g 1 hour duration"
+                />
+              </label>
+            </Flex>
+            <Flex gap="2" asChild align="center" width="100%">
+              <label>
+                <Text as="div" size="2" weight="bold">
+                  Change Timezone
+                </Text>
+                <TextField.Input
+                  defaultValue="Freja Johnsen"
+                  placeholder="Enter your full name"
+                />
+              </label>
+            </Flex>
+          </Flex>
+        </Card>
+      </footer>
     </div>
   );
 }
