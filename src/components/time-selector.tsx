@@ -8,9 +8,14 @@ import { Selector } from "@/components/ui/selector";
 type TimeSelectorProps = {
   date: Date;
   onTimePickerChange?: (date: Date) => void;
+  interval?: number;
 };
-export function TimeSelector({ date, onTimePickerChange }: TimeSelectorProps) {
-  const timeSlots = generateTimeSlots().map((slot) => ({
+export function TimeSelector({
+  date,
+  onTimePickerChange,
+  interval = 60,
+}: TimeSelectorProps) {
+  const timeSlots = generateTimeSlots(interval).map((slot) => ({
     label: slot,
     value: slot,
   }));
