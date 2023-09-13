@@ -38,6 +38,7 @@ export default function App() {
 
   function handleSubmit(value: AppointmentEvent) {
     const { rrule } = value;
+    const DURATION = 1;
 
     const occurencesWithEvent = rrule
       .all()
@@ -46,7 +47,7 @@ export default function App() {
         return {
           title: value.title,
           start: date,
-          end: addHours(date, 1),
+          end: addHours(date, DURATION),
         };
       });
 
@@ -82,7 +83,7 @@ export default function App() {
         localizer={localizer}
         style={{ height: "100vh" }}
         startAccessor="start"
-        endAccessor="end"
+        endAccessor={"end" as any}
       />
     </div>
   );

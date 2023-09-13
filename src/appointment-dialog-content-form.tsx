@@ -3,14 +3,13 @@ import { RRule } from "rrule";
 import { Button, Dialog, Flex, Text, TextField } from "@radix-ui/themes";
 import { Selector } from "@/components/ui/selector";
 import { TimeSelector } from "./components/time-selector";
-import { addHours, format, setMinutes, setSeconds } from "date-fns";
+import { format, setMinutes, setSeconds } from "date-fns";
 import { RequireKeys } from "@/utils/types";
 import { setPartsToUTCDate } from "@/utils/dates";
 
 export type AppointmentEvent = {
   title: string;
   start?: Date;
-  end?: Date;
   rrule: RRule;
 };
 
@@ -24,7 +23,7 @@ export function AppointmentDialogContentForm({
   onSubmit,
 }: AppointmentDialogContentFormProps) {
   const [value, setValue] = useState<
-    RequireKeys<Partial<AppointmentEvent>, "start" | "end" | "title">
+    RequireKeys<Partial<AppointmentEvent>, "start" | "title">
   >(() => {
     const currentDate = new Date();
     const startDate = setSeconds(
@@ -35,7 +34,6 @@ export function AppointmentDialogContentForm({
       ...initialValue,
       title: initialValue.title ?? "",
       start: startDate,
-      end: initialValue.end ?? addHours(startDate, 1),
     };
   });
 
@@ -75,7 +73,6 @@ export function AppointmentDialogContentForm({
               setValue({
                 ...value,
                 start: date,
-                end: addHours(date, 1),
               });
             }}
           />
@@ -101,6 +98,7 @@ export function AppointmentDialogContentForm({
           <Button
             onClick={() => {
               const dtstart = new Date(value.start.toISOString());
+              const until = new Date("2024-12-30T17:00:00Z");
 
               switch (selectedRepeatOption) {
                 case RepeatOptions.DAILY: {
@@ -110,7 +108,7 @@ export function AppointmentDialogContentForm({
                       freq: RRule[selectedRepeatOption],
                       dtstart: setPartsToUTCDate(dtstart),
                       tzid: "Pacific/Auckland",
-                      until: new Date("2023-12-30T17:00:00Z"),
+                      until,
                     }),
                   });
                   break;
@@ -121,7 +119,7 @@ export function AppointmentDialogContentForm({
                     byweekday: [RRule[format(dtstart, "EEEEEE").toUpperCase()]],
                     dtstart: setPartsToUTCDate(dtstart),
                     tzid: "Pacific/Auckland",
-                    until: new Date("2023-12-30T17:00:00Z"),
+                    until,
                   });
                   onSubmit?.({
                     ...value,
@@ -136,7 +134,7 @@ export function AppointmentDialogContentForm({
                       dtstart: setPartsToUTCDate(dtstart),
                       count: 1,
                       tzid: "Pacific/Auckland",
-                      until: new Date("2023-12-30T17:00:00Z"),
+                      until,
                     }),
                   });
                 }
