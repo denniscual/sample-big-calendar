@@ -141,7 +141,6 @@ export function AppointmentDialogContentForm({
                     rrule: new RRule({
                       freq: RRule[selectedRepeatOption],
                       dtstart,
-                      tzid: "Pacific/Auckland",
                       until,
                     }),
                   });
@@ -152,7 +151,6 @@ export function AppointmentDialogContentForm({
                     freq: RRule[selectedRepeatOption],
                     byweekday: [RRule[format(dtstart, "EEEEEE").toUpperCase()]],
                     dtstart,
-                    tzid: "Pacific/Auckland",
                     until,
                   });
                   onSubmit?.({
@@ -167,7 +165,6 @@ export function AppointmentDialogContentForm({
                     rrule: new RRule({
                       dtstart,
                       count: 1,
-                      tzid: "Pacific/Auckland",
                       until,
                     }),
                   });
