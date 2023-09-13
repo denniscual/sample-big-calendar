@@ -41,6 +41,16 @@ export function AppointmentDialogContentForm({
     };
   });
 
+  const rruleRepeatOptions = repeatOptions.map((option) => {
+    if (option.value === RepeatOptions.WEEKLY) {
+      return {
+        value: option.value,
+        label: `Weekly on ${format(value.start, "EEEE")}`,
+      };
+    }
+    return option;
+  });
+
   const [selectedRepeatOption, setSelectedRepeatOption] = useState(
     RepeatOptions.NO_REPEAT
   );
@@ -106,7 +116,7 @@ export function AppointmentDialogContentForm({
           <Selector
             value={selectedRepeatOption}
             onValueChange={setSelectedRepeatOption}
-            items={repeatOptions}
+            items={rruleRepeatOptions}
           />
         </label>
       </Flex>
