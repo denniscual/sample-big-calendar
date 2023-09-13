@@ -23,8 +23,9 @@ import { addHours } from "date-fns";
 
 export default function App() {
   const [events, setEvents] = useState<CalendarEvent[]>([]);
-
   const [selectedSlot, setSelectedSlot] = useState<SlotInfo | null>(null);
+  const [appointmentDuration, setAppointmentDuration] = useState(1);
+
   const isOpenAppointmentDialog = !!selectedSlot;
 
   function handleSelectSlot(data: SlotInfo) {
@@ -33,7 +34,6 @@ export default function App() {
 
   function handleSubmit(value: AppointmentEvent) {
     const { rrule } = value;
-    const DURATION = 1;
 
     const occurencesWithEvent = rrule
       .all()
@@ -42,7 +42,7 @@ export default function App() {
         return {
           title: value.title,
           start: date,
-          end: addHours(date, DURATION),
+          end: addHours(date, appointmentDuration),
         };
       });
 
@@ -106,6 +106,10 @@ export default function App() {
                   Appointment Duration
                 </Text>
                 <TextField.Input
+                  value={appointmentDuration}
+                  onChange={(event) =>
+                    setAppointmentDuration(parseInt(event.target.value))
+                  }
                   type="number"
                   placeholder="E.g 1 hour duration"
                 />
