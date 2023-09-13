@@ -32,10 +32,6 @@ export default function App() {
     setSelectedSlot(data);
   }
 
-  function handleSelectEvent(appointment: AppointmentEvent) {
-    console.log({ appointment });
-  }
-
   function handleSubmit(value: AppointmentEvent) {
     const { rrule } = value;
     const DURATION = 1;
@@ -76,7 +72,6 @@ export default function App() {
       </Dialog.Root>
       <Calendar
         onSelectSlot={handleSelectSlot}
-        onSelectEvent={handleSelectEvent}
         selectable
         defaultView="week"
         events={events as any}
