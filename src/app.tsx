@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import {
   Calendar,
   dateFnsLocalizer,
@@ -20,6 +20,7 @@ import {
 } from "./appointment-dialog-content-form";
 import { getLocalDate } from "@/utils/date";
 import { Selector } from "@/components/ui/selector";
+import timeZoneJSON from "@/assets/timeZone.json";
 
 const locales = {
   "en-US": enUS,
@@ -38,33 +39,15 @@ export default function App() {
   const [selectedTimeZone, setSelectedTimeZone] = useState(
     () => new Intl.DateTimeFormat().resolvedOptions().timeZone
   );
-  const [timeZones, setTimeZones] = useState<string[]>([]);
   const timeZoneOptions = useMemo(
     () =>
-      timeZones.map((timeZone) => ({
+      timeZoneJSON.map((timeZone) => ({
         label: timeZone,
         value: timeZone,
       })),
-    [timeZones]
+    []
   );
   const isOpenAppointmentDialog = !!selectedSlot;
-
-  useEffect(() => {
-    fetch("/api/countries/TimeZone/AvailableTimeZones")
-      .then((res) => {
-        if (!res.ok) {
-          console.error(`HTTP error! Status: ${res.status}`);
-        }
-        return res.json();
-      })
-      .then((data) => {
-        setTimeZones(data);
-      });
-  }, []);
-
-  if (timeZones.length === 0) {
-    return <div>Loading app...</div>;
-  }
 
   function handleSelectSlot(data: SlotInfo) {
     setSelectedSlot(data);

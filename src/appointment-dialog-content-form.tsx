@@ -83,7 +83,7 @@ export function AppointmentDialogContentForm({
         </label>
         <label>
           <Text as="div" size="2" mb="2" weight="bold">
-            Appointment Duration (hour)
+            Appointment Duration (Hour)
           </Text>
           <TextField.Input
             min={0}
