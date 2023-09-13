@@ -2,10 +2,12 @@ import { useState } from "react";
 import { RRule } from "rrule";
 import { Button, Dialog, Flex, Text, TextField } from "@radix-ui/themes";
 import { Selector } from "@/components/ui/selector";
-import { TimeSelector } from "./components/time-selector";
-import { format, setMinutes, setSeconds } from "date-fns";
+import { TimeSelector } from "@/components/time-selector";
+import format from "date-fns/format";
+import setMinutes from "date-fns/setMinutes";
+import setSeconds from "date-fns/setSeconds";
 import { RequireKeys } from "@/utils/types";
-import { getUTCDate } from "@/utils/dates";
+import { getUTCDate } from "@/utils/date";
 
 export type AppointmentEvent = {
   title: string;

@@ -13,14 +13,14 @@ import parse from "date-fns/parse";
 import startOfWeek from "date-fns/startOfWeek";
 import getDay from "date-fns/getDay";
 import enUS from "date-fns/locale/en-US";
+import addHours from "date-fns/addHours";
 import { Button, Card, Dialog, Flex, Text, TextField } from "@radix-ui/themes";
 import {
   AppointmentDialogContentForm,
   AppointmentEvent,
 } from "./appointment-dialog-content-form";
-import { getLocalDate } from "./utils/dates";
-import { addHours } from "date-fns";
-import { Selector } from "./components/ui/selector";
+import { getLocalDate } from "@/utils/date";
+import { Selector } from "@/components/ui/selector";
 
 const locales = {
   "en-US": enUS,
